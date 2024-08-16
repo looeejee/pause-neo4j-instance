@@ -24,7 +24,7 @@ jobs:
       - name: Run a one-line script
         env: # Or as an environment variable
           USER: ${{ secrets.CLIENT_ID }}
-          PWD: ${{ secret.CLIENT_PWD }}
+          PWD: ${{ secrets.CLIENT_PWD }}
         
         run: |
           RESPONSE=$(curl --request POST 'https://api.neo4j.io/oauth/token' \
