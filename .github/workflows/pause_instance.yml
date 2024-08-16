@@ -28,17 +28,17 @@ jobs:
         
         run: |
           RESPONSE=$(curl --request POST 'https://api.neo4j.io/oauth/token' \
-               --user '$CLIENT_ID:$CLIENT_PWD' \
+               --user "$CLIENT_ID:$CLIENT_PWD" \
                --header 'Content-Type: application/x-www-form-urlencoded' \
                --data-urlencode 'grant_type=client_credentials')
           ACCESS_TOKEN=$(echo -n "$RESPONSE" | jq -r '.access_token') 
-          echo -n ACCESS_TOKEN >> $GITHUB_ENV
+          echo -n "ACCESS_TOKEN=$ACCESS_TOKEN" >> $GITHUB_ENV
 
       - name: Pause Instance
         env:
           DBID: ${{ secrets.DBID }}
 
         run: |
-          curl --request POST 'https://api.neo4j.io/v1/instances/$DBID/pause' \
+          curl --request POST "https://api.neo4j.io/v1/instances/$DBID/pause" \
           --header "Authorization: Bearer $ACCESS_TOKEN" \
-          --header 'Content-Type: application/json'
+          --header 'Content-Type: application/json' || { echo 'Failed to pause instance'; exit 1; 
