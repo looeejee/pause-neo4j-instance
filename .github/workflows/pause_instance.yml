@@ -18,27 +18,27 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v4
+    - uses: actions/checkout@v4
 
       # Runs a single command using the runners shell
-      - name: Run a one-line script
-        env: # Or as an environment variable
-          USER: ${{ secrets.CLIENT_ID }}
-          PWD: ${{ secrets.CLIENT_PWD }}
+    - name: Run a one-line script
+      env: # Or as an environment variable
+        USER: ${{ secrets.CLIENT_ID }}
+        PWD: ${{ secrets.CLIENT_PWD }}
         
-        run: |
-          RESPONSE=$(curl --request POST 'https://api.neo4j.io/oauth/token' \
-               --user "$CLIENT_ID:$CLIENT_PWD" \
-               --header 'Content-Type: application/x-www-form-urlencoded' \
-               --data-urlencode 'grant_type=client_credentials')
-          ACCESS_TOKEN=$(echo -n "$RESPONSE" | jq -r '.access_token') 
-          echo -n "ACCESS_TOKEN=$ACCESS_TOKEN" >> $GITHUB_ENV
+      run: |
+        RESPONSE=$(curl --request POST 'https://api.neo4j.io/oauth/token' \
+              --user "${{ env.USER }}:${{ env.PWD }}" \
+              --header 'Content-Type: application/x-www-form-urlencoded' \
+              --data-urlencode 'grant_type=client_credentials')
+        ACCESS_TOKEN=$(echo -n "$RESPONSE" | jq -r '.access_token') 
+        echo -n "ACCESS_TOKEN=$ACCESS_TOKEN" >> $GITHUB_ENV
 
-      - name: Pause Instance
-        env:
-          DBID: ${{ secrets.DBID }}
+    - name: Pause Instance
+      env:
+        DBID: ${{ secrets.DBID }}
 
-        run: |
-          curl --request POST "https://api.neo4j.io/v1/instances/$DBID/pause" \
-          --header "Authorization: Bearer $ACCESS_TOKEN" \
-          --header 'Content-Type: application/json' || { echo 'Failed to pause instance'; exit 1; 
+      run: |
+        curl --request POST "https://api.neo4j.io/v1/instances/$DBID/pause" \
+        --header "Authorization: Bearer $ACCESS_TOKEN" \
+        --header 'Content-Type: application/json' || { echo 'Failed to pause instance'; exit 1; }
