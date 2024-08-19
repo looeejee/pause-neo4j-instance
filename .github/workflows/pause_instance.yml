@@ -45,3 +45,6 @@ jobs:
         curl --request POST "https://api.neo4j.io/v1/instances/$DBID/pause" \
         --header "Authorization: Bearer $ACCESS_TOKEN" \
         --header 'Content-Type: application/json' || { echo 'Failed to pause instance'; exit 1; }
+
+    - name: Check
+      run: echo $GITHUB_ENV
