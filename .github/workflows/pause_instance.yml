@@ -4,14 +4,16 @@ name: PAUSE NEO4J INSTANCE
 
 # Controls when the workflow will run
 on:
-  # Triggers the workflow on push or pull request events but only for the "main" branch
+  # Triggers the workflow to run automatically using a cron job
+  schedule:
+    - cron: '0 20 * * *'
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job called "build"
-  build:
+  # This workflow contains a single job called "pause"
+  pause:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
 
@@ -22,7 +24,7 @@ jobs:
 
       # Runs a single command using the runners shell
     - name: Run a one-line script
-      env: # Or as an environment variable
+      env: # configure env variables to be ued in the next step
         USER: ${{ secrets.CLIENT_ID }}
         PWD: ${{ secrets.CLIENT_PWD }}
         
@@ -39,6 +41,7 @@ jobs:
         DBID: ${{ secrets.DBID }}
 
       run: |
+        echo "PAUSING INSTANCE $DBID..."
         curl --request POST "https://api.neo4j.io/v1/instances/$DBID/pause" \
         --header "Authorization: Bearer $ACCESS_TOKEN" \
         --header 'Content-Type: application/json' || { echo 'Failed to pause instance'; exit 1; }
