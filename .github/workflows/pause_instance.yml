@@ -34,7 +34,6 @@ jobs:
               --header 'Content-Type: application/x-www-form-urlencoded' \
               --data-urlencode 'grant_type=client_credentials')
         ACCESS_TOKEN=$(echo -n "$RESPONSE" | jq -r '.access_token') 
-        echo -n "ACCESS_TOKEN=$ACCESS_TOKEN" >> $GITHUB_ENV
 
     - name: Pause Instance
       env:
@@ -45,3 +44,12 @@ jobs:
         curl --request POST "https://api.neo4j.io/v1/instances/$DBID/pause" \
         --header "Authorization: Bearer $ACCESS_TOKEN" \
         --header 'Content-Type: application/json' || { echo 'Failed to pause instance'; exit 1; }
+
+    - name: Cleanup
+      run: 
+        |
+        echo $ACCESS_TOKEN
+        ACCESS_TOKEN=""
+        echo $ACCESS_TOKEN
+
+    
