@@ -2,4 +2,15 @@
 
 GitHub Action to pause a Neo4j Aura Instance.
 
-This Action runs automatically following a cron schedule and leverages Neo4j REST API to pause a running instance.
+This Action runs automatically following a cron schedule and uses Neo4j AURA DB REST API to pause a running instance.
+
+# How to Use
+
+Define and add values for actions secret in repository settings:
+
+```
+CLIENT_ID
+CLIENT_PWD
+DBID
+```
+
