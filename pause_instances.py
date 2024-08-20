@@ -12,9 +12,9 @@ def get_access_token(user, pwd):
     response.raise_for_status()
     return response.json()['access_token']
 
-def get_instances(access_token):
+def get_instances(access_token, tenant_id):
     response = requests.get(
-        "https://api.neo4j.io/v1/instances?tenantId=%2275c61c13-4974-526a-ab9e-61cbfea1841e%22",
+        f"https://api.neo4j.io/v1/instances?tenantId={tenant_id}",
         headers={
             "Authorization": f"Bearer {access_token}",
             'Content-Type': 'application/json'
@@ -37,9 +37,10 @@ def pause_instance(access_token, dbid):
 def main():
     user = os.getenv('CLIENT_ID')
     pwd = os.getenv('CLIENT_PWD')
+    tenant_id = os.getenv('TENANT_ID')
 
     access_token = get_access_token(user, pwd)
-    instances = get_instances(access_token)
+    instances = get_instances(access_token, tenant_id)
 
     for instance in instances:
         if "luigib" in instance['name']:
