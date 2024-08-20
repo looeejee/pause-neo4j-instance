@@ -4,6 +4,8 @@ on:
   # Triggers the workflow to run automatically using a cron job
   schedule:
     - cron: '0 20 * * *'
+    
+  workflow_dispatch:
 
 jobs:
   pause-instances:
@@ -26,5 +28,7 @@ jobs:
       env:
         CLIENT_ID: ${{ secrets.CLIENT_ID }}
         CLIENT_PWD: ${{ secrets.CLIENT_PWD }}
+        TENANT_ID: ${{ secrets.TENANT_ID }}
+
       run: |
         python pause_instances.py
