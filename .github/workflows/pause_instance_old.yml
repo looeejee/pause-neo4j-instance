@@ -1,0 +1,66 @@
+# This is a basic workflow to help you get started with Actions
+
+name: PAUSE NEO4J INSTANCE
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow to run automatically using a cron job
+  #schedule:
+  #  - cron: '0 20 * * *'
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "pause"
+  pause:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+    - uses: actions/checkout@v4
+
+      # Runs a single command using the runners shell
+    - name: Run a one-line script
+      env: # configure env variables to be ued in the next step
+        USER: ${{ secrets.CLIENT_ID }}
+        PWD: ${{ secrets.CLIENT_PWD }}
+        
+      run: |
+        RESPONSE=$(curl --request POST 'https://api.neo4j.io/oauth/token' \
+              --user "${{ env.USER }}:${{ env.PWD }}" \
+              --header 'Content-Type: application/x-www-form-urlencoded' \
+              --data-urlencode 'grant_type=client_credentials')
+        ACCESS_TOKEN=$(echo -n "$RESPONSE" | jq -r '.access_token') 
+        echo -n "ACCESS_TOKEN=$ACCESS_TOKEN" >> $GITHUB_ENV
+
+
+    - name: GET ALL INSTANCES CREATED BY ME
+      run: |
+        response=(curl -s --request GET "https://api.neo4j.io/v1/instances?tenantId=%2275c61c13-4974-526a-ab9e-61cbfea1841e%22" \
+        --header "Authorization: Bearer $ACCESS_TOKEN" \
+        --header 'Content-Type: application/json')
+
+        filtered_list=$(echo "$response" | jq '[.data[] | select(.name | contains("luigib")) | {id: .id, name: .name}]')
+
+        # Save the filtered list to a new variable
+        new_variable="$filtered_list"
+
+        # Save the filtered list to a new variable
+        echo "$filtered_list" > filtered_list.json
+
+    - name: Pause Instances
+      run: |
+        # Read the filtered list from the file
+        instances=$(cat filtered_list.json)
+
+        # Loop through each instance and pause it
+        echo "$instances" | jq -c '.[]' | while read -r instance; do
+        dbid=$(echo "$instance" | jq -r '.id')
+        echo "PAUSING INSTANCE $dbid..."
+        curl --request POST "https://api.neo4j.io/v1/instances/$dbid/pause" \
+        --header "Authorization: Bearer $ACCESS_TOKEN" \
+        --header 'Content-Type: application/json' || { echo 'Failed to pause instance'; exit 1; }
+        done
