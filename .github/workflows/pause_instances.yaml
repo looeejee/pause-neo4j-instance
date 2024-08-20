@@ -1,9 +1,9 @@
 name: Pause Instances Workflow
 
 on:
-  push:
-    branches:
-      - main
+  # Triggers the workflow to run automatically using a cron job
+  schedule:
+    - cron: '0 20 * * *'
 
 jobs:
   pause-instances:
@@ -20,7 +20,7 @@ jobs:
 
     - name: Install dependencies
       run: |
-        pip install requests
+        pip install -r requirements.txt
 
     - name: Run pause instances script
       env:
