@@ -31,13 +31,23 @@ def pause_instance(access_token, dbid):
             'Content-Type': 'application/json'
         }
     )
-    response.raise_for_status()
+    
+    # Check if the response indicates that the database is not running
+    if response.status_code == 400:  # Assuming 400 is the status code for bad requests
+        error_response = response.json()
+        if "errors" in error_response:
+            for error in error_response["errors"]:
+                if error.get("reason") == "db-not-running":
+                    print(f"Database {dbid} is not running. Skipping...")
+                    return  # Skip to the next instance
+
+    response.raise_for_status()  # Raise an error for other issues
     print(f"Paused instance {dbid}")
 
 def main():
     user = os.getenv('CLIENT_ID')
     pwd = os.getenv('CLIENT_PWD')
-    tenant_id = os.getenv('TENANT_ID')
+    tenant_id = os.getenv('TENANT_ID')  # Read tenantId from environment variable
 
     access_token = get_access_token(user, pwd)
     instances = get_instances(access_token, tenant_id)
