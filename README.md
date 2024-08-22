@@ -16,3 +16,4 @@ CLIENT_PWD
 TENANT_ID
 ```
 
+See https://neo4j.com/docs/aura/platform/api/authentication/#_creating_credentials for steps to create API Credentials from the Neo4j Aura Console.
