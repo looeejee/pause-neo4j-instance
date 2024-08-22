@@ -33,7 +33,7 @@ def pause_instance(access_token, dbid):
     )
     
     # Check if the response indicates that the database is not running
-    if response.status_code == 400:  # Assuming 400 is the status code for bad requests
+    if response.status_code == 400:
         error_response = response.json()
         if "errors" in error_response:
             for error in error_response["errors"]:
@@ -47,7 +47,7 @@ def pause_instance(access_token, dbid):
 def main():
     user = os.getenv('CLIENT_ID')
     pwd = os.getenv('CLIENT_PWD')
-    tenant_id = os.getenv('TENANT_ID')  # Read tenantId from environment variable
+    tenant_id = os.getenv('TENANT_ID')
 
     access_token = get_access_token(user, pwd)
     instances = get_instances(access_token, tenant_id)
