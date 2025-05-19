@@ -25,7 +25,7 @@ def get_instances(access_token, tenant_id):
 
 def pause_instance(access_token, dbid):
     response = requests.post(
-        f"https://api.neo4j.io/v1/instances/{dbid}/pause",
+        f"https://api.neo4j.io/v1/instances/{dbid}/resume",
         headers={
             "Authorization": f"Bearer {access_token}",
             'Content-Type': 'application/json'

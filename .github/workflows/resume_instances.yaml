@@ -1,4 +1,4 @@
-name: Pause Instances Workflow
+name: Resume Instances Workflow
 
 on:
   # Triggers the workflow to run automatically using a cron job
@@ -24,7 +24,7 @@ jobs:
       run: |
         pip install -r requirements.txt
 
-    - name: Run pause instances script
+    - name: Run resume instances script
       env:
         CLIENT_ID: ${{ secrets.CLIENT_ID }}
         CLIENT_PWD: ${{ secrets.CLIENT_PWD }}
