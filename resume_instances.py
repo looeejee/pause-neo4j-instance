@@ -23,7 +23,7 @@ def get_instances(access_token, tenant_id):
     response.raise_for_status()
     return response.json()['data']
 
-def pause_instance(access_token, dbid):
+def resume_instance(access_token, dbid):
     response = requests.post(
         f"https://api.neo4j.io/v1/instances/{dbid}/resume",
         headers={
@@ -54,7 +54,7 @@ def main():
 
     for instance in instances:
         if "luigib" in instance['name']:
-            pause_instance(access_token, instance['id'])
+            resume_instance(access_token, instance['id'])
 
 if __name__ == "__main__":
     main()
