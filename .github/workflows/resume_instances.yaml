@@ -2,8 +2,8 @@ name: Resume Instances Workflow
 
 on:
   # Triggers the workflow to run automatically using a cron job
-  schedule:
-    - cron: '0 20 * * *'
+  #schedule:
+  #  - cron: '0 20 * * *'
     
   workflow_dispatch:
 
